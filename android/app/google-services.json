@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "637778059826",
+    "project_id": "whatsapp-a50b1",
+    "storage_bucket": "whatsapp-a50b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637778059826:android:c8fdc5c687c8232a19d22b",
+        "android_client_info": {
+          "package_name": "com.mattheussoares.whatsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "637778059826-r6vrtsj212c58lbfdlck5bgr3plqegg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbGJGchqKkc1zGCxHREPPTCGsZtrbi_kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "637778059826-r6vrtsj212c58lbfdlck5bgr3plqegg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

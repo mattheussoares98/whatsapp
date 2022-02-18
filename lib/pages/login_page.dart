@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp/utils/app_routes.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -8,6 +10,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Firebase.initializeApp();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,10 +29,12 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
+                SizedBox(
+                  height: 300,
+                  width: double.infinity,
                   child: Image.asset(
                     'lib/images/logo.png',
+                    fit: BoxFit.fill,
                   ),
                 ),
                 TextField(
@@ -70,13 +81,14 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 16),
                 GestureDetector(
                   onTap: () {
-                    print('funfou');
+                    Navigator.of(context).pushNamed(AppRoutes.register);
                   },
                   child: const Text(
                     'Não possui uma conta? Cadastre uma',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
+                      fontSize: 20,
                     ),
                   ),
                 ),

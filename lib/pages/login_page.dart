@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:whatsapp/controller/login_user_controller.dart';
 import 'package:whatsapp/model/user.dart';
+import 'package:whatsapp/provider/login_user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
+import 'package:whatsapp/utils/show_error_message.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,10 +22,12 @@ class _LoginPageState extends State<LoginPage> {
     Firebase.initializeApp();
   }
 
+  Usuario _usuario = Usuario();
+
   @override
   Widget build(BuildContext context) {
-    LoginUserController _loginUserController = LoginUserController();
-    Usuario _usuario = Usuario();
+    LoginUserProvider loginUserProvider = LoginUserProvider();
+    ShowErrorMessage showErrorMessage = ShowErrorMessage();
 
     bool validate() {
       bool isValid = _formKey.currentState!.validate();
@@ -60,6 +63,8 @@ class _LoginPageState extends State<LoginPage> {
                     validator: (value) {
                       if (!value!.contains('@')) {
                         return 'O e-mail é inválido';
+                      } else if(value.contains(' ')){
+                        return 'Retire os espaços';
                       }
                       return null;
                     },
@@ -105,11 +110,16 @@ class _LoginPageState extends State<LoginPage> {
                         return;
                       }
 
-                      await _loginUserController.login(_usuario);
+                      await loginUserProvider.login(_usuario);
 
-                      if (_loginUserController.isSignIn) {
+                      if (loginUserProvider.isSignIn) {
                         Navigator.of(context)
                             .pushReplacementNamed(AppRoutes.home);
+                      } else {
+                        showErrorMessage.showErrorMessage(
+                          context: context,
+                          message: loginUserProvider.errorMessage,
+                        );
                       }
                     },
                     child: const Text(

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp/controller/create_user_controller.dart';
 import 'package:whatsapp/model/user.dart';
+import 'package:whatsapp/provider/create_user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
+import 'package:whatsapp/utils/show_error_message.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -13,10 +14,11 @@ class RegisterPage extends StatefulWidget {
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _RegisterPageState extends State<RegisterPage> {
+    CreateUserProvider createUserProvider = CreateUserProvider();
+    final Usuario _usuario = Usuario();
   @override
   Widget build(BuildContext context) {
-    CreateUserController createUserController = CreateUserController();
-    Usuario _usuario = Usuario();
+    ShowErrorMessage showErrorMessage = ShowErrorMessage();
 
     bool validate() {
       bool isValid = _formKey.currentState!.validate();
@@ -86,8 +88,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     onChanged: (value) => _usuario.email = value,
                     validator: (value) {
-                      if (!value!.trim().contains('@')) {
+                      value!.trim();
+                      if (!value.contains('@')) {
                         return 'E-mail inválido';
+                      } else if (value.contains(' ')) {
+                        return 'Retire os espaços';
                       }
                       return null;
                     },
@@ -116,21 +121,32 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                    onPressed: () async {
-                      bool isValid = validate();
-                      if (!isValid) {
-                        return;
-                      }
+                    onPressed: createUserProvider.isLoading
+                        ? null
+                        : () async {
+                            bool isValid = validate();
+                            if (!isValid) {
+                              return;
+                            }
 
-                      await createUserController.createUser(_usuario);
+                            await createUserProvider.createUser(_usuario);
 
-                      if (createUserController.isRegistered) {
-                        Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .pushReplacementNamed(AppRoutes.home);
-                      }
-                    },
-                    child: const Text('Cadastrar'),
+                            if (createUserProvider.isRegistered) {
+                              //sucesso na criação do usuário
+                              Navigator.of(context).pop();
+                              Navigator.of(context)
+                                  .pushReplacementNamed(AppRoutes.home);
+                            } else {
+                              //erro na criação do usuário
+                              showErrorMessage.showErrorMessage(
+                                context: context,
+                                message: createUserProvider.errorMessage,
+                              );
+                            }
+                          },
+                    child: createUserProvider.isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Cadastrar'),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

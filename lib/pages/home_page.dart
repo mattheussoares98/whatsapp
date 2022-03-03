@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp/utils/app_routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -25,11 +27,23 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: const Text('WhatsApp'),
       ),
-      body: ElevatedButton(
-        onPressed: () {
-          saveInfo();
-        },
-        child: const Text('Salvar'),
+      body: Row(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              saveInfo();
+            },
+            child: const Text('Salvar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              FirebaseAuth auth = FirebaseAuth.instance;
+              await auth.signOut();
+              Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+            },
+            child: const Text('Logout'),
+          ),
+        ],
       ),
     );
   }

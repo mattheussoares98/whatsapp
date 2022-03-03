@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp/controller/create_user_controller.dart';
 import 'package:whatsapp/model/user.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 
@@ -10,42 +10,22 @@ class RegisterPage extends StatefulWidget {
   _RegisterPageState createState() => _RegisterPageState();
 }
 
-final _formKey = GlobalKey<FormState>();
-
-Map _data = {
-  'name': '',
-  'password': '',
-  'email': '',
-};
-
-Future _createUser(Usuario usuario) async {
-  FirebaseAuth auth = FirebaseAuth.instance;
-
-  await auth.createUserWithEmailAndPassword(
-    email: usuario.email,
-    password: usuario.password,
-  );
-}
+GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
-    validate() {
-      bool isValid = _formKey.currentState!.validate();
-      if (!isValid) {
-        return;
-      }
-    }
+    CreateUserController createUserController = CreateUserController();
+    Usuario _usuario = Usuario();
 
-    Usuario usuario = Usuario();
-    usuario.email = _data['email'];
-    usuario.password = _data['password'];
-    try {
-      _createUser(usuario);
-    } catch (e) {
-      print('erro no login ----------> $e');
-    } finally {
-      Navigator.of(context).pushNamed(AppRoutes.home);
+    bool validate() {
+      bool isValid = _formKey.currentState!.validate();
+
+      if (!isValid) {
+        return false;
+      } else {
+        return true;
+      }
     }
 
     return Scaffold(
@@ -83,10 +63,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       hintText: 'Nome',
                     ),
-                    onChanged: (value) => _data['name'] = value,
+                    onChanged: (value) => _usuario.name = value,
                     validator: (value) {
-                      if (_data['name'].toString().length < 3) {
-                        return 'O nome deve conter no mínimo 3 caracteres';
+                      if (value!.isEmpty || value.length < 3) {
+                        return 'O nome deve conter no mínimo 3 letras';
                       }
                       return null;
                     },
@@ -104,9 +84,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       hintText: 'E-mail',
                     ),
-                    onChanged: (value) => _data['email'] = value,
+                    onChanged: (value) => _usuario.email = value,
                     validator: (value) {
-                      if (!value!.contains('@')) {
+                      if (!value!.trim().contains('@')) {
                         return 'E-mail inválido';
                       }
                       return null;
@@ -126,9 +106,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: 'Senha',
                     ),
                     obscureText: true,
-                    onChanged: (value) => _data['password'] = value,
+                    onChanged: (value) => _usuario.password = value,
                     validator: (value) {
-                      if (value!.length <= 6) {
+                      if (value!.length < 6) {
                         return 'A senha deve conter no mínimo 6 caracteres';
                       }
                       return null;
@@ -136,8 +116,19 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                    onPressed: () {
-                      validate();
+                    onPressed: () async {
+                      bool isValid = validate();
+                      if (!isValid) {
+                        return;
+                      }
+
+                      await createUserController.createUser(_usuario);
+
+                      if (createUserController.isRegistered) {
+                        Navigator.of(context).pop();
+                        Navigator.of(context)
+                            .pushReplacementNamed(AppRoutes.home);
+                      }
                     },
                     child: const Text('Cadastrar'),
                     style: ElevatedButton.styleFrom(

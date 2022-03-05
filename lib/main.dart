@@ -13,8 +13,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<CreateUserProvider>(create: (_) => CreateUserProvider()),
-        Provider<LoginUserProvider>(create: (_) => LoginUserProvider()),
+        ChangeNotifierProvider(create: (_) => CreateUserProvider()),
+        ChangeNotifierProvider(create: (_) => LoginUserProvider()),
       ],
       child: MaterialApp(
         theme: theme.copyWith(

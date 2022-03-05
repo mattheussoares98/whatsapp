@@ -5,6 +5,15 @@ class Usuario {
 
   Usuario();
 
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = {
+      'nome': name,
+      'email': email,
+    };
+
+    return map;
+  }
+
   String get email {
     return _email!;
   }

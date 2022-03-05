@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:whatsapp/model/user.dart';
 import 'package:whatsapp/provider/create_user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
@@ -14,11 +15,13 @@ class RegisterPage extends StatefulWidget {
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _RegisterPageState extends State<RegisterPage> {
-    CreateUserProvider createUserProvider = CreateUserProvider();
-    final Usuario _usuario = Usuario();
+  final Usuario _usuario = Usuario();
+  ShowErrorMessage showErrorMessage = ShowErrorMessage();
+
   @override
   Widget build(BuildContext context) {
-    ShowErrorMessage showErrorMessage = ShowErrorMessage();
+    final CreateUserProvider createUserProvider =
+        Provider.of(context, listen: true);
 
     bool validate() {
       bool isValid = _formKey.currentState!.validate();
@@ -93,6 +96,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         return 'E-mail inválido';
                       } else if (value.contains(' ')) {
                         return 'Retire os espaços';
+                      } else if (!value.contains('.')) {
+                        return 'E-mail inválido';
                       }
                       return null;
                     },
@@ -128,7 +133,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (!isValid) {
                               return;
                             }
-
                             await createUserProvider.createUser(_usuario);
 
                             if (createUserProvider.isRegistered) {

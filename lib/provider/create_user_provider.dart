@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:whatsapp/model/user.dart';
@@ -26,6 +27,7 @@ class CreateUserProvider extends ChangeNotifier {
   ) async {
     _isLoading = true;
     FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
     _registered = false;
     _errorMessage = '';
     notifyListeners();
@@ -40,12 +42,23 @@ class CreateUserProvider extends ChangeNotifier {
         _registered = true;
       }
     } catch (e) {
-      _registered = false;
       _changeErrorMessage(e.toString());
       print('erro no cadastro ----------> $e');
     } finally {
       _isLoading = false;
+      notifyListeners();
     }
+
+    //adicionando o nome e email no firestore caso dê certo o cadastro do usuário
+    if (isRegistered) {
+      await firestore
+          .collection('user')
+          .doc(auth.currentUser!.uid)
+          .set(usuario.toMap());
+    }
+
+    _isLoading = false;
+
     notifyListeners();
   }
 
@@ -54,8 +67,10 @@ class CreateUserProvider extends ChangeNotifier {
       _errorMessage = 'E-mail com formato inválido';
     } else if (error.contains('already in use by another account')) {
       _errorMessage = 'Esse e-mail já foi cadastrado';
-    } else if( error.contains('network error')){
+    } else if (error.contains('network error')) {
       _errorMessage = 'Verifique a sua internet';
+    } else {
+      _errorMessage = 'O banco de dados não permitiu o cadastro';
     }
   }
 }

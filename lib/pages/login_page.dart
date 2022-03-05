@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
     Firebase.initializeApp();
   }
 
-  Usuario _usuario = Usuario();
+  final Usuario _usuario = Usuario();
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +63,10 @@ class _LoginPageState extends State<LoginPage> {
                     validator: (value) {
                       if (!value!.contains('@')) {
                         return 'O e-mail é inválido';
-                      } else if(value.contains(' ')){
+                      } else if (value.contains(' ')) {
                         return 'Retire os espaços';
+                      } else if (!value.contains('.')) {
+                        return 'E-mail inválido';
                       }
                       return null;
                     },

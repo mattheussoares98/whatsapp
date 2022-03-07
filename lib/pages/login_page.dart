@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:whatsapp/model/user.dart';
 import 'package:whatsapp/provider/login_user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
@@ -15,29 +17,40 @@ class LoginPage extends StatefulWidget {
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _LoginPageState extends State<LoginPage> {
+  // _validCurrentUser() async {
+  //   await Firebase.initializeApp();
+  //   FirebaseAuth auth = FirebaseAuth.instance;
+
+  //   if (auth.currentUser != null) {
+  //     Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+  //   }
+  // }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Firebase.initializeApp();
+    // _validCurrentUser();
   }
 
   final Usuario _usuario = Usuario();
+  ShowErrorMessage showErrorMessage = ShowErrorMessage();
+
+  bool validate() {
+    bool isValid = _formKey.currentState!.validate();
+
+    if (!isValid) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    LoginUserProvider loginUserProvider = LoginUserProvider();
-    ShowErrorMessage showErrorMessage = ShowErrorMessage();
-
-    bool validate() {
-      bool isValid = _formKey.currentState!.validate();
-
-      if (!isValid) {
-        return false;
-      } else {
-        return true;
-      }
-    }
+    final LoginUserProvider loginUserProvider =
+        Provider.of(context, listen: true);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -60,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   TextFormField(
+                    enabled: loginUserProvider.isLoading ? false : true,
                     validator: (value) {
                       if (!value!.contains('@')) {
                         return 'O e-mail é inválido';
@@ -71,7 +85,6 @@ class _LoginPageState extends State<LoginPage> {
                       return null;
                     },
                     onChanged: (value) => _usuario.email = value,
-                    autofocus: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -85,6 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
+                    enabled: loginUserProvider.isLoading ? false : true,
                     validator: (value) {
                       if (value!.length < 6) {
                         return 'A senha deve conter no mínimo 6 caracteres';
@@ -93,7 +107,6 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     onChanged: (value) => _usuario.password = value,
                     obscureText: true,
-                    autofocus: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -106,28 +119,32 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                    onPressed: () async {
-                      bool isValid = validate();
-                      if (!isValid) {
-                        return;
-                      }
+                    onPressed: loginUserProvider.isLoading
+                        ? null
+                        : () async {
+                            bool isValid = validate();
+                            if (!isValid) {
+                              return;
+                            }
 
-                      await loginUserProvider.login(_usuario);
+                            await loginUserProvider.login(_usuario);
 
-                      if (loginUserProvider.isSignIn) {
-                        Navigator.of(context)
-                            .pushReplacementNamed(AppRoutes.home);
-                      } else {
-                        showErrorMessage.showErrorMessage(
-                          context: context,
-                          message: loginUserProvider.errorMessage,
-                        );
-                      }
-                    },
-                    child: const Text(
-                      'Entrar',
-                      style: TextStyle(fontSize: 20),
-                    ),
+                            if (loginUserProvider.isSignIn) {
+                              Navigator.of(context)
+                                  .pushReplacementNamed(AppRoutes.home);
+                            } else {
+                              showErrorMessage.showErrorMessage(
+                                context: context,
+                                message: loginUserProvider.errorMessage,
+                              );
+                            }
+                          },
+                    child: loginUserProvider.isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text(
+                            'Entrar',
+                            style: TextStyle(fontSize: 20),
+                          ),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

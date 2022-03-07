@@ -66,7 +66,7 @@ class CreateUserProvider extends ChangeNotifier {
     if (error.contains('badly formatted')) {
       _errorMessage = 'E-mail com formato inválido';
     } else if (error.contains('already in use by another account')) {
-      _errorMessage = 'Esse e-mail já foi cadastrado';
+      _errorMessage = 'Esse e-mail já foi cadastrado. Faça o login';
     } else if (error.contains('network error')) {
       _errorMessage = 'Verifique a sua internet';
     } else {

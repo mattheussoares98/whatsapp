@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:whatsapp/pages/configurations_page.dart';
 import 'package:whatsapp/pages/home_page.dart';
 import 'package:whatsapp/pages/login_page.dart';
 import 'package:whatsapp/pages/register_page.dart';
@@ -32,6 +34,7 @@ void main() {
           AppRoutes.login: (context) => const LoginPage(),
           AppRoutes.register: (context) => const RegisterPage(),
           AppRoutes.home: (context) => const HomePage(),
+          AppRoutes.configurations: (context) => const ConfigurationsPage(),
         },
       ),
     ),

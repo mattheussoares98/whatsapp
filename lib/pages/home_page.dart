@@ -12,20 +12,24 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  saveInfo() async {
-    FirebaseFirestore storage = FirebaseFirestore.instance;
+List<String> popUpMenuItems = ['Configurações', 'Logout'];
 
-    await storage.collection('x').add(
-      {'nome': 'Mattheus Soares Barbosa'},
-    );
+class _HomePageState extends State<HomePage> {
+  _actionsToPopUpMenuItems(String value) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    await auth.signOut();
+    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+
+    Navigator.of(context).pushNamed(AppRoutes.configurations);
+    print('teste');
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      initialIndex: 1,
+      initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -51,11 +55,30 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.configurations);
+              },
+              icon: Icon(Icons.manage_accounts),
+            ),
+            IconButton(
+              onPressed: () async {
+                // FirebaseAuth auth = FirebaseAuth.instance;
+
+                // await auth.signOut();
+                // Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+              },
+              icon: Icon(Icons.logout),
+            ),
+          ],
         ),
-        body: const TabBarView(children: [
-          ConversationsPage(),
-          ContactsPage(),
-        ]),
+        body: const TabBarView(
+          children: [
+            ConversationsPage(),
+            ContactsPage(),
+          ],
+        ),
       ),
     );
   }

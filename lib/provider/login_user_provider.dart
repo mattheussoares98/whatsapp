@@ -27,7 +27,6 @@ class LoginUserProvider extends ChangeNotifier {
     _signIn = false;
     _errorMessage = '';
     notifyListeners();
-
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: usuario.email,
@@ -40,6 +39,10 @@ class LoginUserProvider extends ChangeNotifier {
     } catch (e) {
       _changeErrorMessage(e.toString());
       print('erro no login -----> $e');
+      notifyListeners();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
 
     _isLoading = false;
@@ -56,6 +59,10 @@ class LoginUserProvider extends ChangeNotifier {
       _errorMessage = 'Verifique a sua internet';
     } else if (error.contains('no user record')) {
       _errorMessage = 'Não há cadastro com esse e-mail';
+    } else if (error.contains('have blocked all')) {
+      _errorMessage = 'Login temporariamente bloqueado para o usuário';
+    } else {
+      _errorMessage = 'O banco de dados não permitiu seu login';
     }
   }
 }

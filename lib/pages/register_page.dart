@@ -56,6 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    enabled: createUserProvider.isLoading ? false : true,
                     autofocus: true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
@@ -78,6 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
+                    enabled: createUserProvider.isLoading ? false : true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
                         color: Colors.redAccent[400],
@@ -104,6 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
+                    enabled: createUserProvider.isLoading ? false : true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
                         color: Colors.redAccent[400],

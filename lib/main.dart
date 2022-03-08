@@ -7,6 +7,7 @@ import 'package:whatsapp/pages/login_page.dart';
 import 'package:whatsapp/pages/register_page.dart';
 import 'package:whatsapp/provider/create_user_provider.dart';
 import 'package:whatsapp/provider/login_user_provider.dart';
+import 'package:whatsapp/provider/user_image_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 
 void main() {
@@ -17,6 +18,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => CreateUserProvider()),
         ChangeNotifierProvider(create: (_) => LoginUserProvider()),
+        ChangeNotifierProvider(create: (_) => UserImageProvider()),
       ],
       child: MaterialApp(
         theme: theme.copyWith(

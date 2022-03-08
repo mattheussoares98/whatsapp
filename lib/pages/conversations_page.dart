@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:whatsapp/model/conversations.dart';
+import 'package:whatsapp/provider/user_image_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 
 class ConversationsPage extends StatefulWidget {
@@ -9,18 +11,38 @@ class ConversationsPage extends StatefulWidget {
   State<ConversationsPage> createState() => _ConversationsPageState();
 }
 
-List<Conversations> conversations = [
-  Conversations(
-    imageUrl:
-        'https://a2.espncdn.com/combiner/i?img=%2Fphoto%2F2021%2F1201%2Fr944946_1296x729_16%2D9.jpg',
-    message: '?Hola, como estas?',
-    userName: 'Sergio Ramos',
-  ),
-];
-
 class _ConversationsPageState extends State<ConversationsPage> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  bool didChange = false;
+  @override
+  void didChangeDependencies() async {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    UserImageProvider _userImageProvider = Provider.of(context, listen: false);
+    if (didChange == false) {
+      await _userImageProvider.loadCurrentUserImage();
+    }
+
+    didChange = true;
+  }
+
+  List<Conversations> conversations = [
+    Conversations(
+      imageUrl: '',
+      message: '?Hola, como estas?',
+      userName: 'Sergio Ramos',
+    ),
+  ];
+
+  @override
   Widget build(BuildContext context) {
+    UserImageProvider _userImageProvider = Provider.of(context, listen: true);
+
     return ListView.builder(
       itemCount: conversations.length,
       itemBuilder: (context, index) {
@@ -28,7 +50,9 @@ class _ConversationsPageState extends State<ConversationsPage> {
           leading: CircleAvatar(
             backgroundColor:
                 Colors.grey, //aparece essa cor enquanto carrega a imagem
-            backgroundImage: NetworkImage(conversations[index].imageUrl),
+            backgroundImage: _userImageProvider.imageUrl != ''
+                ? NetworkImage(_userImageProvider.imageUrl)
+                : null,
             radius: 25,
           ),
           title: Text(

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp/pages/contacts_page.dart';
@@ -12,17 +11,24 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-List<String> popUpMenuItems = ['Configurações', 'Logout'];
-
 class _HomePageState extends State<HomePage> {
+  final List<String> popUpMenuItems = const ['Configurações', 'Logout'];
+
   _actionsToPopUpMenuItems(String value) async {
     FirebaseAuth auth = FirebaseAuth.instance;
 
-    await auth.signOut();
-    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-
-    Navigator.of(context).pushNamed(AppRoutes.configurations);
-    print('teste');
+    if (value == 'Logout') {
+      await auth.signOut();
+      await Future.delayed(const Duration(milliseconds: 100));
+      //se não colocar a navegação pra ser executada depois de um Future.delayed,
+      //não funciona a navegação
+      Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+    } else if (value == 'Configurações') {
+      await Future.delayed(const Duration(milliseconds: 100));
+      //se não colocar a navegação pra ser executada depois de um Future.delayed,
+      //não funciona a navegação
+      Navigator.of(context).pushNamed(AppRoutes.configurations);
+    }
   }
 
   @override
@@ -56,21 +62,18 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.configurations);
+            PopupMenuButton(
+              itemBuilder: (context) {
+                return popUpMenuItems
+                    .map(
+                      (item) => PopupMenuItem(
+                        child: Text(item),
+                        onTap: () => _actionsToPopUpMenuItems(item),
+                      ),
+                    )
+                    .toList();
               },
-              icon: Icon(Icons.manage_accounts),
-            ),
-            IconButton(
-              onPressed: () async {
-                // FirebaseAuth auth = FirebaseAuth.instance;
-
-                // await auth.signOut();
-                // Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-              },
-              icon: Icon(Icons.logout),
-            ),
+            )
           ],
         ),
         body: const TabBarView(

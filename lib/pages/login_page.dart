@@ -17,21 +17,27 @@ class LoginPage extends StatefulWidget {
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _LoginPageState extends State<LoginPage> {
-  // _validCurrentUser() async {
-  //   await Firebase.initializeApp();
-  //   FirebaseAuth auth = FirebaseAuth.instance;
+  Future _validCurrentUser() async {
+    await Firebase.initializeApp();
+    FirebaseAuth auth = FirebaseAuth.instance;
 
-  //   if (auth.currentUser != null) {
-  //     Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-  //   }
-  // }
+    if (auth.currentUser != null) {
+      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Firebase.initializeApp();
-    // _validCurrentUser();
+    _validCurrentUser();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   final Usuario _usuario = Usuario();

@@ -1,12 +1,19 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserImageProvider with ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
   bool _isLoadingImage = false;
 
   bool get isLoadingImage {
@@ -32,13 +39,10 @@ class UserImageProvider with ChangeNotifier {
   }
 
   Future<String> loadCurrentUserImage() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseStorage storage = FirebaseStorage.instance;
-
-    _imageUrl = await storage
+    _imageUrl = await _storage
         .ref()
         .child('images')
-        .child(auth.currentUser!.uid)
+        .child(_auth.currentUser!.uid)
         .getDownloadURL();
 
     notifyListeners();
@@ -50,6 +54,7 @@ class UserImageProvider with ChangeNotifier {
     required bool isCamera,
   }) async {
     _errorMessage = '';
+
     notifyListeners();
 
     final ImagePicker _picker = ImagePicker();
@@ -75,26 +80,35 @@ class UserImageProvider with ChangeNotifier {
 
     _selectedImage = File(imageFile.path);
 
-    await uploadImage(
+    _isLoadingImage = true;
+    notifyListeners();
+
+    await _uploadImageToStorage(
       selectedImage: _selectedImage!,
+    );
+
+    await updateImageOnFirestore();
+
+    _isLoadingImage = false;
+    notifyListeners();
+  }
+
+  updateImageOnFirestore() async {
+    await _firestore.collection('user').doc(_auth.currentUser!.uid).update(
+      {
+        'imageUrl': _imageUrl,
+      },
     );
   }
 
-  uploadImage({
+  _uploadImageToStorage({
     required File selectedImage,
   }) async {
-    FirebaseStorage storage = FirebaseStorage.instance;
-    FirebaseAuth auth = FirebaseAuth.instance;
-
-    _isLoadingImage = true;
-
-    notifyListeners();
-
     //aqui ele faz o upload do arquivo. Antes de fazer o upload, faça o login
-    UploadTask task = storage
+    UploadTask task = _storage
         .ref()
         .child('images')
-        .child(auth.currentUser!.uid)
+        .child(_auth.currentUser!.uid)
         .putFile(selectedImage);
 
 //verificar o status do upload

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp/model/conversations.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
-import 'package:whatsapp/utils/app_routes.dart';
 
 class ConversationsPage extends StatefulWidget {
   const ConversationsPage({Key? key}) : super(key: key);
@@ -14,14 +13,12 @@ class ConversationsPage extends StatefulWidget {
 class _ConversationsPageState extends State<ConversationsPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
   bool didChange = false;
   @override
   void didChangeDependencies() async {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     UserImageProvider _userImageProvider = Provider.of(context, listen: false);
     if (didChange == false) {

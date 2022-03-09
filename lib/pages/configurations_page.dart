@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp/provider/login_user_provider.dart';
+import 'package:whatsapp/provider/user_data_provider.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
 
 class ConfigurationsPage extends StatefulWidget {
@@ -10,25 +11,43 @@ class ConfigurationsPage extends StatefulWidget {
   State<ConfigurationsPage> createState() => _ConfigurationsPageState();
 }
 
-final TextEditingController _nameController = TextEditingController();
+TextEditingController _nameController = TextEditingController();
 
 class _ConfigurationsPageState extends State<ConfigurationsPage> {
   bool didChange = false;
   @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
+  void didChangeDependencies() async {
     super.didChangeDependencies();
 
     final UserImageProvider _userImageProvider =
         Provider.of(context, listen: false);
 
+    final UserDataProvider _userDataProvider =
+        Provider.of(context, listen: false);
+
     if (didChange == false && _userImageProvider.imageUrl == '') {
-      print('executou');
-      _userImageProvider.loadCurrentUserImage();
+      await _userImageProvider.loadCurrentUserImage();
     }
+
+    await _userDataProvider.getUserName();
+
+    setState(() {
+      _nameController.text = _userDataProvider.userName;
+    });
+
+    // _nameController.text = teste.toString();
 
     didChange = true;
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _nameController.clear();
+  }
+
+  String _userName = '';
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +55,9 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
         Provider.of(context, listen: true);
 
     final LoginUserProvider _loginUserProvider =
+        Provider.of(context, listen: true);
+
+    final UserDataProvider _userDataProvider =
         Provider.of(context, listen: true);
 
     return Scaffold(
@@ -107,20 +129,15 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
                     ),
                   ],
                 ),
-                TextFormField(
+                TextField(
                   controller: _nameController,
-                  enabled: _loginUserProvider.isLoading ? false : true,
-                  validator: (value) {
-                    // if (!value!.contains('@')) {
-                    //   return 'O e-mail é inválido';
-                    // } else if (value.contains(' ')) {
-                    //   return 'Retire os espaços';
-                    // } else if (!value.contains('.')) {
-                    //   return 'E-mail inválido';
-                    // }
-                    // return null;
+                  enabled: _loginUserProvider.isLoading ||
+                          _userDataProvider.isLoading
+                      ? false
+                      : true,
+                  onChanged: (value) {
+                    _userName = value;
                   },
-                  onChanged: (value) => _nameController.text = value,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -134,11 +151,29 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: _loginUserProvider.isLoading
-                      ? const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
+                  onPressed: _userDataProvider.isLoading
+                      ? null
+                      : () {
+                          _userDataProvider.updateNameOnFirestore(
+                            _userName,
+                          );
+                        },
+                  child: _userDataProvider.isLoading
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                'Carregando...',
+                                style: TextStyle(
+                                  fontSize: 25,
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                              CircularProgressIndicator(),
+                            ],
+                          ),
                         )
                       : const Padding(
                           padding: EdgeInsets.all(16.0),

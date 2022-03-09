@@ -48,20 +48,31 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               children: [
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: _userImageProvider.isLoadingImage
-                      ? const CircularProgressIndicator(
-                          strokeWidth: 1,
-                        )
-                      : CircleAvatar(
+                _userImageProvider.isLoadingImage
+                    ? Column(
+                        children: const [
+                          Text(
+                              'Esse processo pode ser demorado\ncaso a sua internet esteja lenta...'),
+                          SizedBox(height: 20),
+                          SizedBox(
+                            height: 200,
+                            width: 200,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1,
+                            ),
+                          ),
+                        ],
+                      )
+                    : SizedBox(
+                        height: 200,
+                        width: 200,
+                        child: CircleAvatar(
                           backgroundColor: Colors.grey,
                           backgroundImage: _userImageProvider.imageUrl != ''
                               ? NetworkImage(_userImageProvider.imageUrl)
                               : null,
                         ),
-                ),
+                      ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

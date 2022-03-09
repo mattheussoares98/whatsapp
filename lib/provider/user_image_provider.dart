@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,27 +102,17 @@ class UserImageProvider with ChangeNotifier {
       print('Task state: ${snapshot.state}');
 
       String progress =
-          '${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %';
+          '${(snapshot.bytesTransferred / snapshot.totalBytes) * 100}';
       print(progress);
-
-      // Future.delayed(
-      //   const Duration(seconds: 15),
-      //   () {
-      //     if (snapshot.state == TaskState.running) {
-      //       print('retornou');
-      //       return;
-      //     }
-      //   },
-      // );
     }, onError: (e) {
-      // The final snapshot is also available on the task via `.snapshot`,
-      // this can include 2 additional states, `TaskState.error` & `TaskState.canceled`
       print('task.snapshot ==== ${task.snapshot}');
 
       _errorMessage = e.toString();
     });
 
     try {
+      print('task.snapshot ========= ${task.snapshot}');
+
       await task;
 
       print('Upload complete.');

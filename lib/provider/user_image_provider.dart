@@ -39,11 +39,19 @@ class UserImageProvider with ChangeNotifier {
   }
 
   Future<String> loadCurrentUserImage() async {
-    _imageUrl = await _storage
-        .ref()
-        .child('images')
-        .child(_auth.currentUser!.uid)
-        .getDownloadURL();
+    _imageUrl = '';
+
+    try {
+      _imageUrl = await _storage
+          .ref()
+          .child('images')
+          .child(_auth.currentUser!.uid)
+          .getDownloadURL();
+    } catch (e) {
+      print('erro pra carregar a imagem $e');
+      _imageUrl = '';
+      notifyListeners();
+    }
 
     notifyListeners();
 
@@ -110,6 +118,8 @@ class UserImageProvider with ChangeNotifier {
         .child('images')
         .child(_auth.currentUser!.uid)
         .putFile(selectedImage);
+
+    print(selectedImage.toString());
 
 //verificar o status do upload
     task.snapshotEvents.listen((TaskSnapshot snapshot) {

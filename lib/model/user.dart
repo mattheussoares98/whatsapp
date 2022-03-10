@@ -7,7 +7,7 @@ class Usuario {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      'nome': name,
+      'name': name,
       'email': email,
     };
 

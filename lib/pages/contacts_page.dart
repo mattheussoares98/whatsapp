@@ -12,14 +12,6 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  List<Conversations> conversations = [
-    Conversations(
-      imageUrl:
-          'https://a2.espncdn.com/combiner/i?img=%2Fphoto%2F2021%2F1201%2Fr944946_1296x729_16%2D9.jpg',
-      userName: 'Sergio Ramos',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     UserDataProvider _userDataProvider = Provider.of(context, listen: true);
@@ -34,7 +26,7 @@ class _ContactsPageState extends State<ContactsPage> {
             );
           } else {
             return ListView.builder(
-              itemCount: _userDataProvider.items.length,
+              itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -43,11 +35,11 @@ class _ContactsPageState extends State<ContactsPage> {
                       backgroundColor: Colors
                           .grey, //aparece essa cor enquanto carrega a imagem
                       backgroundImage:
-                          NetworkImage(conversations[index].imageUrl),
+                          NetworkImage(_userDataProvider.items[index].imageUrl),
                       radius: 25,
                     ),
                     title: Text(
-                      conversations[index].userName,
+                      _userDataProvider.items[index].name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

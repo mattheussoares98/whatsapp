@@ -39,9 +39,7 @@ class UserDataProvider extends ChangeNotifier {
     return _items;
   }
 
-  Future<List<Usuario>> loadUsers(
-      // Usuario usuario
-      ) async {
+  Future<List<Usuario>> loadUsers() async {
     items.clear();
 
     QuerySnapshot<Map<String, dynamic>> snapshot =
@@ -49,16 +47,19 @@ class UserDataProvider extends ChangeNotifier {
 
     List<QueryDocumentSnapshot<Map<String, dynamic>>> data = snapshot.docs;
 
-    // print('data ========== ${data[0].data()}');
+    for (QueryDocumentSnapshot<Map<String, dynamic>> itemsData in data) {
+      Usuario usuario = Usuario();
+      usuario.name = itemsData.data()['name'];
+      usuario.imageUrl = itemsData.data()['imageUrl'];
+      usuario.email = itemsData.data()['email'];
 
-    for (QueryDocumentSnapshot<Map<String, dynamic>> x in data) {
-      _items.add(x.data()['user']);
+      _items.add(usuario);
     }
 
-    print(items);
+    print(data.length);
 
     notifyListeners();
-    return items;
+    return _items;
   }
 
   updateNameOnFirestore(String name) async {

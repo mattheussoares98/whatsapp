@@ -15,14 +15,10 @@ class LoginPage extends StatefulWidget {
 }
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-bool _isValidatingCurrentUser = false;
 
 class _LoginPageState extends State<LoginPage> {
+  bool _isValidatingCurrentUser = false;
   Future _validCurrentUser() async {
-    // setState(() {
-    //   _isValidatingCurrentUser = true;
-    // });
-    await Firebase.initializeApp();
     FirebaseAuth auth = FirebaseAuth.instance;
 
     if (auth.currentUser != null) {
@@ -65,14 +61,27 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final LoginUserProvider loginUserProvider =
+    final LoginUserProvider _loginUserProvider =
         Provider.of(context, listen: true);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
       body: Center(
         child: _isValidatingCurrentUser
-            ? const CircularProgressIndicator()
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'Validando login...',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  CircularProgressIndicator(),
+                ],
+              )
             : SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 150),
@@ -91,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         TextFormField(
-                          enabled: loginUserProvider.isLoading ? false : true,
+                          enabled: _loginUserProvider.isLoading ? false : true,
                           validator: (value) {
                             if (!value!.contains('@')) {
                               return 'O e-mail é inválido';
@@ -116,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
-                          enabled: loginUserProvider.isLoading ? false : true,
+                          enabled: _loginUserProvider.isLoading ? false : true,
                           validator: (value) {
                             if (value!.length < 6) {
                               return 'A senha deve conter no mínimo 6 caracteres';
@@ -137,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 8),
                         ElevatedButton(
-                          onPressed: loginUserProvider.isLoading
+                          onPressed: _loginUserProvider.isLoading
                               ? null
                               : () async {
                                   bool isValid = validate();
@@ -145,19 +154,19 @@ class _LoginPageState extends State<LoginPage> {
                                     return;
                                   }
 
-                                  await loginUserProvider.login(_usuario);
+                                  await _loginUserProvider.login(_usuario);
 
-                                  if (loginUserProvider.isSignIn) {
+                                  if (_loginUserProvider.isSignIn) {
                                     Navigator.of(context)
                                         .pushReplacementNamed(AppRoutes.home);
                                   } else {
                                     showErrorMessage.showErrorMessage(
                                       context: context,
-                                      message: loginUserProvider.errorMessage,
+                                      message: _loginUserProvider.errorMessage,
                                     );
                                   }
                                 },
-                          child: loginUserProvider.isLoading
+                          child: _loginUserProvider.isLoading
                               ? const CircularProgressIndicator()
                               : const Text(
                                   'Entrar',

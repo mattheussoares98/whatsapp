@@ -10,6 +10,7 @@ class Usuario {
     Map<String, dynamic> map = {
       'name': name,
       'email': email,
+      'imageUrl': imageUrl,
     };
 
     return map;

@@ -26,6 +26,8 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
         Provider.of(context, listen: false);
 
     if (didChange == false && _userImageProvider.imageUrl == '') {
+      print(_userImageProvider.imageUrl);
+      print('carregando imagem');
       await _userImageProvider.loadCurrentUserImage();
     }
 
@@ -34,8 +36,6 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
     setState(() {
       _nameController.text = _userDataProvider.userName;
     });
-
-    // _nameController.text = teste.toString();
 
     didChange = true;
   }
@@ -47,7 +47,7 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
     _nameController.clear();
   }
 
-  String _userName = '';
+  // String _userName = '';
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +117,6 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
                         await _userImageProvider.takeAndUploadPicture(
                           isCamera: false,
                         );
-
-                        if (_userImageProvider.errorMessage != '') {}
                       },
                       child: const Text(
                         'Galeria',
@@ -135,9 +133,9 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
                           _userDataProvider.isLoading
                       ? false
                       : true,
-                  onChanged: (value) {
-                    _userName = value;
-                  },
+                  // onChanged: (value) {
+                  //   _userName = value;
+                  // },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -155,7 +153,7 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
                       ? null
                       : () {
                           _userDataProvider.updateNameOnFirestore(
-                            _userName,
+                            _nameController.text,
                           );
                         },
                   child: _userDataProvider.isLoading

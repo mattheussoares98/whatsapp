@@ -1,4 +1,3 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp/model/conversations.dart';
@@ -15,18 +14,8 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  bool didChange = false;
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
     UserImageProvider _userImageProvider = Provider.of(context, listen: false);
-    if (didChange == false) {
-      await _userImageProvider.loadCurrentUserImage();
-    }
-
-    didChange = true;
+    _userImageProvider.loadCurrentUserImage();
   }
 
   List<Conversations> conversations = [

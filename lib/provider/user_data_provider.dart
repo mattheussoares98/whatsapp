@@ -9,18 +9,6 @@ class UserDataProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  bool _registered = false;
-
-  get isRegistered {
-    return _registered;
-  }
-
-  String _errorMessage = '';
-
-  get errorMessage {
-    return _errorMessage;
-  }
-
   String _userName = '';
 
   get userName {
@@ -33,31 +21,46 @@ class UserDataProvider extends ChangeNotifier {
     return _isLoading;
   }
 
-  List<Usuario> _items = [];
+  // ignore: prefer_final_fields
+  final List<Usuario> _items = [];
 
   List<Usuario> get items {
     return _items;
   }
 
   Future<List<Usuario>> loadUsers() async {
-    items.clear();
-
+    _isLoading = true;
+    _items.clear();
     QuerySnapshot<Map<String, dynamic>> snapshot =
         await _firestore.collection('user').get();
 
     List<QueryDocumentSnapshot<Map<String, dynamic>>> data = snapshot.docs;
 
+    print('limpou a lista');
     for (QueryDocumentSnapshot<Map<String, dynamic>> itemsData in data) {
+      print('executando o for');
       Usuario usuario = Usuario();
+
       usuario.name = itemsData.data()['name'];
-      usuario.imageUrl = itemsData.data()['imageUrl'];
       usuario.email = itemsData.data()['email'];
+      usuario.imageUrl = itemsData.data()['imageUrl'];
+
+      DocumentSnapshot<Map<String, dynamic>> dataOfCurrentUser =
+          await _firestore.collection('user').doc(_auth.currentUser!.uid).get();
+
+      if (usuario.email == dataOfCurrentUser.data()!['email']) continue;
+      //se o e-mail for igual ao do usuário logado, não adiciona na lista pro
+      //usuário não conseguir abrir uma conversa com ele mesmo
 
       _items.add(usuario);
     }
+    print('terminou de adicionar na lista');
 
-    print(data.length);
+    //se colocar um notifyListeners aqui, fica executando eternamente o for
+    // notifyListeners();
 
+    print(_items.length);
+    _isLoading = false;
     notifyListeners();
     return _items;
   }
@@ -81,57 +84,5 @@ class UserDataProvider extends ChangeNotifier {
     Map<String, dynamic> data = snapshot.data()!;
 
     _userName = data['name'];
-  }
-
-  Future<void> createUser(
-    Usuario usuario,
-  ) async {
-    _isLoading = true;
-
-    _registered = false;
-    _errorMessage = '';
-    notifyListeners();
-
-    try {
-      UserCredential userCredencial =
-          await _auth.createUserWithEmailAndPassword(
-        email: usuario.email,
-        password: usuario.password,
-      );
-
-      if (userCredencial.user != null) {
-        _registered = true;
-      }
-    } catch (e) {
-      _changeErrorMessage(e.toString());
-      print('erro no cadastro ----------> $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-
-    //adicionando o nome e email no firestore caso dê certo o cadastro do usuário
-    if (isRegistered) {
-      await _firestore
-          .collection('user')
-          .doc(_auth.currentUser!.uid)
-          .set(usuario.toMap());
-    }
-
-    _isLoading = false;
-
-    notifyListeners();
-  }
-
-  _changeErrorMessage(String error) {
-    if (error.contains('badly formatted')) {
-      _errorMessage = 'E-mail com formato inválido';
-    } else if (error.contains('already in use by another account')) {
-      _errorMessage = 'Esse e-mail já foi cadastrado. Faça o login';
-    } else if (error.contains('network error')) {
-      _errorMessage = 'Verifique a sua internet';
-    } else {
-      _errorMessage = 'O banco de dados não permitiu o cadastro';
-    }
   }
 }

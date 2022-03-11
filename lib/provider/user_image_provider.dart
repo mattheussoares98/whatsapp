@@ -40,7 +40,6 @@ class UserImageProvider with ChangeNotifier {
 
   Future<String> loadCurrentUserImage() async {
     _imageUrl = '';
-
     try {
       _imageUrl = await _storage
           .ref()

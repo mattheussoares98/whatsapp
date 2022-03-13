@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp/model/user.dart';
+import 'package:whatsapp/model/user_model.dart';
 import 'package:whatsapp/provider/login_user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 import 'package:whatsapp/utils/show_error_message.dart';
@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  final Usuario _usuario = Usuario();
+  final UserModel _user = UserModel();
   ShowErrorMessage showErrorMessage = ShowErrorMessage();
 
   bool validate() {
@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
-                          onChanged: (value) => _usuario.email = value,
+                          onChanged: (value) => _user.email = value,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
-                          onChanged: (value) => _usuario.password = value,
+                          onChanged: (value) => _user.password = value,
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                                     return;
                                   }
 
-                                  await _loginUserProvider.login(_usuario);
+                                  await _loginUserProvider.login(_user);
 
                                   if (_loginUserProvider.isSignIn) {
                                     Navigator.of(context)

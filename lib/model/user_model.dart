@@ -1,16 +1,16 @@
-class Usuario {
+class UserModel {
   String? _email;
   String? _name;
   String? _password;
   String? _imageUrl;
+  String? _idUser;
 
-  Usuario();
+  UserModel();
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'name': name,
       'email': email,
-      'imageUrl': imageUrl,
     };
 
     return map;
@@ -22,6 +22,14 @@ class Usuario {
 
   set email(value) {
     _email = value;
+  }
+
+  String get idUser {
+    return _idUser!;
+  }
+
+  set idUser(value) {
+    _idUser = value;
   }
 
   String get name {

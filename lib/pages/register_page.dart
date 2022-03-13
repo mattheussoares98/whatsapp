@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp/model/user.dart';
+import 'package:whatsapp/model/user_model.dart';
 import 'package:whatsapp/provider/login_user_provider.dart';
-import 'package:whatsapp/provider/user_data_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 import 'package:whatsapp/utils/show_error_message.dart';
 
@@ -16,12 +15,11 @@ class RegisterPage extends StatefulWidget {
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _RegisterPageState extends State<RegisterPage> {
-  final Usuario _usuario = Usuario();
+  final UserModel _user = UserModel();
   ShowErrorMessage showErrorMessage = ShowErrorMessage();
 
   @override
   Widget build(BuildContext context) {
-    _usuario.imageUrl = 'http://';
     final LoginUserProvider _loginUserProvider =
         Provider.of(context, listen: true);
 
@@ -71,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       hintText: 'Nome',
                     ),
-                    onChanged: (value) => _usuario.name = value,
+                    onChanged: (value) => _user.name = value,
                     validator: (value) {
                       if (value!.isEmpty || value.length < 3) {
                         return 'O nome deve conter no mínimo 3 letras';
@@ -93,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       hintText: 'E-mail',
                     ),
-                    onChanged: (value) => _usuario.email = value,
+                    onChanged: (value) => _user.email = value,
                     validator: (value) {
                       value!.trim();
                       if (!value.contains('@')) {
@@ -121,7 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: 'Senha',
                     ),
                     obscureText: true,
-                    onChanged: (value) => _usuario.password = value,
+                    onChanged: (value) => _user.password = value,
                     validator: (value) {
                       if (value!.length < 6) {
                         return 'A senha deve conter no mínimo 6 caracteres';
@@ -138,7 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (!isValid) {
                               return;
                             }
-                            await _loginUserProvider.createUser(_usuario);
+                            await _loginUserProvider.createUser(_user);
 
                             if (_loginUserProvider.isRegistered) {
                               //sucesso na criação do usuário

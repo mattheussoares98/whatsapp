@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp/model/user.dart';
+import 'package:whatsapp/model/user_model.dart';
 import 'package:whatsapp/provider/user_data_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 
@@ -38,23 +38,23 @@ class _ContactsPageState extends State<ContactsPage> {
         : ListView.builder(
             itemCount: _userDataProvider.items.length,
             itemBuilder: (context, index) {
-              Usuario usuario = _userDataProvider.items[index];
+              UserModel user = _userDataProvider.items[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: ListTile(
                   onTap: () {
                     Navigator.of(context).pushNamed(
                       AppRoutes.messages,
-                      arguments: usuario,
+                      arguments: user,
                     );
                   },
                   leading: CircleAvatar(
                     backgroundColor: Colors
                         .grey, //aparece essa cor enquanto carrega a imagem
                     backgroundImage: _userDataProvider.items[index].imageUrl ==
-                                '' ||
-                            _userDataProvider.items[index].imageUrl == 'http://'
-                        ? null
+                            'null'
+                        ? const AssetImage('lib/images/avatar.jpeg')
+                            as ImageProvider
                         : NetworkImage(_userDataProvider.items[index].imageUrl),
                     radius: 25,
                   ),

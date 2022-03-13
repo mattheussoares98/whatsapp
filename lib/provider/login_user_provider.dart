@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:whatsapp/model/user.dart';
+import 'package:whatsapp/model/user_model.dart';
 
 class LoginUserProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -21,6 +21,12 @@ class LoginUserProvider extends ChangeNotifier {
     return _errorMessage;
   }
 
+  String? _idLoggedUser;
+
+  get idLoggedUser {
+    return _idLoggedUser;
+  }
+
   bool _isLoading = false;
 
   get isLoading {
@@ -33,20 +39,22 @@ class LoginUserProvider extends ChangeNotifier {
     return _registered;
   }
 
-  Future login(Usuario usuario) async {
+  Future login(UserModel user) async {
     _isLoading = true;
     _signIn = false;
     _errorMessage = '';
     notifyListeners();
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: usuario.email,
-        password: usuario.password,
+        email: user.email,
+        password: user.password,
       );
 
       if (userCredential.user != null) {
         _signIn = true;
       }
+
+      _idLoggedUser = userCredential.user!.uid;
     } catch (e) {
       _changeErrorMessage(e.toString());
       print('erro no login -----> $e');
@@ -62,24 +70,42 @@ class LoginUserProvider extends ChangeNotifier {
   }
 
   Future<void> createUser(
-    Usuario usuario,
+    UserModel user,
   ) async {
     _isLoading = true;
 
     _registered = false;
     _errorMessage = '';
+    user.imageUrl = 'null';
     notifyListeners();
+
+    String? userId;
 
     try {
       UserCredential userCredencial =
           await _auth.createUserWithEmailAndPassword(
-        email: usuario.email,
-        password: usuario.password,
+        email: user.email,
+        password: user.password,
       );
 
       if (userCredencial.user != null) {
         _registered = true;
       }
+
+      if (isRegistered) {
+        await _firestore
+            .collection('user')
+            .doc(_auth.currentUser!.uid)
+            .set(user.toMap());
+      }
+
+      userId = userCredencial.user!.uid;
+
+      //quando cria o usuário, também adiciona o id do usuário
+      await _firestore
+          .collection('user')
+          .doc(userId)
+          .update({'userId': userId});
     } catch (e) {
       _changeErrorMessage(e.toString());
       print('erro no cadastro ----------> $e');
@@ -89,12 +115,6 @@ class LoginUserProvider extends ChangeNotifier {
     }
 
     //adicionando o nome e email no firestore caso dê certo o cadastro do usuário
-    if (isRegistered) {
-      await _firestore
-          .collection('user')
-          .doc(_auth.currentUser!.uid)
-          .set(usuario.toMap());
-    }
 
     _isLoading = false;
 

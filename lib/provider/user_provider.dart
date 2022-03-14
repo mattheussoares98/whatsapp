@@ -5,20 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:whatsapp/model/user_model.dart';
 
-class LoginUserProvider extends ChangeNotifier {
+class UserDataProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String _userName = '';
 
-  bool _signIn = false;
-
-  bool get isSignIn {
-    return _signIn;
-  }
-
-  String _errorMessage = '';
-
-  get errorMessage {
-    return _errorMessage;
+  get userName {
+    return _userName;
   }
 
   String? _idLoggedUser;
@@ -31,6 +24,25 @@ class LoginUserProvider extends ChangeNotifier {
 
   get isLoading {
     return _isLoading;
+  }
+
+  // ignore: prefer_final_fields
+  final List<UserModel> _items = [];
+
+  List<UserModel> get items {
+    return _items;
+  }
+
+  bool _signIn = false;
+
+  bool get isSignIn {
+    return _signIn;
+  }
+
+  String _errorMessage = '';
+
+  get errorMessage {
+    return _errorMessage;
   }
 
   bool _registered = false;
@@ -76,7 +88,7 @@ class LoginUserProvider extends ChangeNotifier {
 
     _registered = false;
     _errorMessage = '';
-    user.imageUrl = 'null';
+    user.imageUrl = 'lib/images/avatar.jpeg';
     notifyListeners();
 
     String? userId;
@@ -101,11 +113,11 @@ class LoginUserProvider extends ChangeNotifier {
 
       userId = userCredencial.user!.uid;
 
-      //quando cria o usuário, também adiciona o id do usuário
+      //quando cria o usuário, também adiciona uma imagem padrão pra ele
       await _firestore
           .collection('user')
           .doc(userId)
-          .update({'userId': userId});
+          .update({'imageUrl': user.imageUrl});
     } catch (e) {
       _changeErrorMessage(e.toString());
       print('erro no cadastro ----------> $e');
@@ -137,5 +149,68 @@ class LoginUserProvider extends ChangeNotifier {
     } else {
       _errorMessage = 'O banco de dados não permitiu seu login';
     }
+  }
+
+  getIdOfCurrentUser() {
+    _idLoggedUser = _auth.currentUser!.uid;
+  }
+
+  Future<List<UserModel>> loadUsers() async {
+    _isLoading = true;
+    _items.clear();
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await _firestore.collection('user').get();
+
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> data = snapshot.docs;
+
+    print('limpou a lista');
+    for (QueryDocumentSnapshot<Map<String, dynamic>> itemsData in data) {
+      print('executando o for');
+      UserModel userModel = UserModel();
+
+      userModel.name = itemsData.data()['name'];
+      userModel.email = itemsData.data()['email'];
+      userModel.imageUrl = itemsData.data()['imageUrl'];
+      userModel.idUser = itemsData.id;
+
+      DocumentSnapshot<Map<String, dynamic>> dataOfCurrentUser =
+          await _firestore.collection('user').doc(_auth.currentUser!.uid).get();
+
+      if (userModel.email == dataOfCurrentUser.data()!['email']) continue;
+      //se o e-mail for igual ao do usuário logado, não adiciona na lista pro
+      //usuário não conseguir abrir uma conversa com ele mesmo
+
+      _items.add(userModel);
+    }
+    print('terminou de adicionar na lista');
+
+    //se colocar um notifyListeners aqui, fica executando eternamente o for
+    // notifyListeners();
+
+    print(_items.length);
+    _isLoading = false;
+    notifyListeners();
+    return _items;
+  }
+
+  updateNameOnFirestore(String name) async {
+    _isLoading = true;
+    notifyListeners();
+
+    await _firestore.collection('user').doc(_auth.currentUser!.uid).update({
+      'name': name,
+    });
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> getUserName() async {
+    DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await _firestore.collection('user').doc(_auth.currentUser!.uid).get();
+
+    Map<String, dynamic> data = snapshot.data()!;
+
+    _userName = data['name'];
   }
 }

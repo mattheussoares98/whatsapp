@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp/provider/login_user_provider.dart';
-import 'package:whatsapp/provider/user_data_provider.dart';
+import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
 
 class ConfigurationsPage extends StatefulWidget {
@@ -25,7 +24,8 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
     final UserDataProvider _userDataProvider =
         Provider.of(context, listen: false);
 
-    if (didChange == false && _userImageProvider.imageUrl == '') {
+    if (didChange == false &&
+        _userImageProvider.imageUrl != 'lib/images/avatar.jpeg') {
       print(_userImageProvider.imageUrl);
       print('carregando imagem');
       await _userImageProvider.loadCurrentUserImage();
@@ -47,14 +47,9 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
     _nameController.clear();
   }
 
-  // String _userName = '';
-
   @override
   Widget build(BuildContext context) {
     final UserImageProvider _userImageProvider =
-        Provider.of(context, listen: true);
-
-    final LoginUserProvider _loginUserProvider =
         Provider.of(context, listen: true);
 
     final UserDataProvider _userDataProvider =
@@ -90,9 +85,11 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
                         width: 200,
                         child: CircleAvatar(
                           backgroundColor: Colors.grey,
-                          backgroundImage: _userImageProvider.imageUrl != ''
-                              ? NetworkImage(_userImageProvider.imageUrl)
-                              : null,
+                          backgroundImage: _userImageProvider.imageUrl ==
+                                  'lib/images/avatar.jpeg'
+                              ? const AssetImage('lib/images/avatar.jpeg')
+                                  as ImageProvider
+                              : NetworkImage(_userImageProvider.imageUrl),
                         ),
                       ),
                 const SizedBox(height: 10),
@@ -129,10 +126,10 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
                 ),
                 TextField(
                   controller: _nameController,
-                  enabled: _loginUserProvider.isLoading ||
-                          _userDataProvider.isLoading
-                      ? false
-                      : true,
+                  enabled:
+                      _userDataProvider.isLoading || _userDataProvider.isLoading
+                          ? false
+                          : true,
                   // onChanged: (value) {
                   //   _userName = value;
                   // },

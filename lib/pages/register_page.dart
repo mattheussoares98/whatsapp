@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp/model/user_model.dart';
-import 'package:whatsapp/provider/login_user_provider.dart';
+import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 import 'package:whatsapp/utils/show_error_message.dart';
 
@@ -20,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final LoginUserProvider _loginUserProvider =
+    final UserDataProvider _userDataProvider =
         Provider.of(context, listen: true);
 
     bool validate() {
@@ -56,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    enabled: _loginUserProvider.isLoading ? false : true,
+                    enabled: _userDataProvider.isLoading ? false : true,
                     autofocus: true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
@@ -79,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    enabled: _loginUserProvider.isLoading ? false : true,
+                    enabled: _userDataProvider.isLoading ? false : true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
                         color: Colors.redAccent[400],
@@ -106,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    enabled: _loginUserProvider.isLoading ? false : true,
+                    enabled: _userDataProvider.isLoading ? false : true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
                         color: Colors.redAccent[400],
@@ -129,16 +129,16 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                    onPressed: _loginUserProvider.isLoading
+                    onPressed: _userDataProvider.isLoading
                         ? null
                         : () async {
                             bool isValid = validate();
                             if (!isValid) {
                               return;
                             }
-                            await _loginUserProvider.createUser(_user);
+                            await _userDataProvider.createUser(_user);
 
-                            if (_loginUserProvider.isRegistered) {
+                            if (_userDataProvider.isRegistered) {
                               //sucesso na criação do usuário
                               Navigator.of(context).pop();
                               Navigator.of(context)
@@ -147,11 +147,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               //erro na criação do usuário
                               showErrorMessage.showErrorMessage(
                                 context: context,
-                                message: _loginUserProvider.errorMessage,
+                                message: _userDataProvider.errorMessage,
                               );
                             }
                           },
-                    child: _loginUserProvider.isLoading
+                    child: _userDataProvider.isLoading
                         ? const CircularProgressIndicator()
                         : const Text('Cadastrar'),
                     style: ElevatedButton.styleFrom(

@@ -6,8 +6,7 @@ import 'package:whatsapp/pages/login_page.dart';
 import 'package:whatsapp/pages/messages_page.dart';
 import 'package:whatsapp/pages/register_page.dart';
 import 'package:whatsapp/pages/splash_screen.dart';
-import 'package:whatsapp/provider/user_data_provider.dart';
-import 'package:whatsapp/provider/login_user_provider.dart';
+import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 
@@ -18,7 +17,6 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserDataProvider()),
-        ChangeNotifierProvider(create: (_) => LoginUserProvider()),
         ChangeNotifierProvider(create: (_) => UserImageProvider()),
       ],
       child: MaterialApp(

@@ -70,6 +70,7 @@ flutter:
     - lib/images/usuario.png
     - lib/images/download.jpeg
     - lib/images/avatar.jpeg
+    - lib/images/background_conversation_image.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

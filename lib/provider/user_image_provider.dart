@@ -39,7 +39,7 @@ class UserImageProvider with ChangeNotifier {
   }
 
   Future<String> loadCurrentUserImage() async {
-    _imageUrl = '';
+    _imageUrl = 'lib/images/avatar.jpeg';
     try {
       _imageUrl = await _storage
           .ref()
@@ -47,8 +47,8 @@ class UserImageProvider with ChangeNotifier {
           .child(_auth.currentUser!.uid)
           .getDownloadURL();
     } catch (e) {
-      print('erro pra carregar a imagem $e');
-      _imageUrl = '';
+      print('erro pra carregar a imagem ======== $e');
+      _imageUrl = 'lib/images/avatar.jpeg';
       notifyListeners();
     }
 

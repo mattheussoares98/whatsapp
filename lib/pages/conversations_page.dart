@@ -11,13 +11,6 @@ class ConversationsPage extends StatefulWidget {
 }
 
 class _ConversationsPageState extends State<ConversationsPage> {
-  @override
-  void initState() {
-    super.initState();
-    UserImageProvider _userImageProvider = Provider.of(context, listen: false);
-    _userImageProvider.loadCurrentUserImage();
-  }
-
   List<Conversations> conversations = [
     Conversations(
       imageUrl: '',
@@ -37,9 +30,10 @@ class _ConversationsPageState extends State<ConversationsPage> {
           leading: CircleAvatar(
             backgroundColor:
                 Colors.grey, //aparece essa cor enquanto carrega a imagem
-            backgroundImage: _userImageProvider.imageUrl != ''
-                ? NetworkImage(_userImageProvider.imageUrl)
-                : null,
+            backgroundImage: _userImageProvider.imageUrl ==
+                    'lib/images/avatar.jpeg'
+                ? const AssetImage('lib/images/avatar.jpeg') as ImageProvider
+                : NetworkImage(_userImageProvider.imageUrl),
             radius: 25,
           ),
           title: Text(

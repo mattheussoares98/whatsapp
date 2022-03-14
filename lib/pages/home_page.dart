@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:whatsapp/pages/contacts_page.dart';
 import 'package:whatsapp/pages/conversations_page.dart';
+import 'package:whatsapp/provider/user_image_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,6 +31,13 @@ class _HomePageState extends State<HomePage> {
       //não funciona a navegação
       Navigator.of(context).pushNamed(AppRoutes.configurations);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    UserImageProvider _userImageProvider = Provider.of(context, listen: false);
+    _userImageProvider.loadCurrentUserImage();
   }
 
   @override

@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp/model/user_model.dart';
-import 'package:whatsapp/provider/login_user_provider.dart';
+import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 import 'package:whatsapp/utils/show_error_message.dart';
 
@@ -61,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final LoginUserProvider _loginUserProvider =
+    final UserDataProvider _userDataProvider =
         Provider.of(context, listen: true);
 
     return Scaffold(
@@ -100,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         TextFormField(
-                          enabled: _loginUserProvider.isLoading ? false : true,
+                          enabled: _userDataProvider.isLoading ? false : true,
                           validator: (value) {
                             if (!value!.contains('@')) {
                               return 'O e-mail é inválido';
@@ -125,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
-                          enabled: _loginUserProvider.isLoading ? false : true,
+                          enabled: _userDataProvider.isLoading ? false : true,
                           validator: (value) {
                             if (value!.length < 6) {
                               return 'A senha deve conter no mínimo 6 caracteres';
@@ -146,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 8),
                         ElevatedButton(
-                          onPressed: _loginUserProvider.isLoading
+                          onPressed: _userDataProvider.isLoading
                               ? null
                               : () async {
                                   bool isValid = validate();
@@ -154,19 +153,19 @@ class _LoginPageState extends State<LoginPage> {
                                     return;
                                   }
 
-                                  await _loginUserProvider.login(_user);
+                                  await _userDataProvider.login(_user);
 
-                                  if (_loginUserProvider.isSignIn) {
+                                  if (_userDataProvider.isSignIn) {
                                     Navigator.of(context)
                                         .pushReplacementNamed(AppRoutes.home);
                                   } else {
                                     showErrorMessage.showErrorMessage(
                                       context: context,
-                                      message: _loginUserProvider.errorMessage,
+                                      message: _userDataProvider.errorMessage,
                                     );
                                   }
                                 },
-                          child: _loginUserProvider.isLoading
+                          child: _userDataProvider.isLoading
                               ? const CircularProgressIndicator()
                               : const Text(
                                   'Entrar',

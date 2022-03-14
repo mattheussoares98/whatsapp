@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp/model/user_model.dart';
-import 'package:whatsapp/provider/user_data_provider.dart';
+import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -24,7 +24,8 @@ class _ContactsPageState extends State<ContactsPage> {
     super.initState();
 
     _loadUsers();
-    print('executou a atualização dos uauários');
+
+    print('executou a atualização dos usuários');
   }
 
   @override
@@ -52,7 +53,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     backgroundColor: Colors
                         .grey, //aparece essa cor enquanto carrega a imagem
                     backgroundImage: _userDataProvider.items[index].imageUrl ==
-                            'null'
+                            'lib/images/avatar.jpeg'
                         ? const AssetImage('lib/images/avatar.jpeg')
                             as ImageProvider
                         : NetworkImage(_userDataProvider.items[index].imageUrl),

@@ -1,20 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp/model/message.dart';
 
 class BoxMessageWidget {
   _sendMessage({
     required String idLoggedUser,
     required String idRecipientUser,
-    required Map<String, dynamic> message,
-  }) {
+    required String text,
+  }) async {
     FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
-    _fireStore
-        .collection('messages')
-        .doc(idLoggedUser)
-        .collection(idRecipientUser)
-        .doc()
-        .set(message);
+    if (text.isNotEmpty) {
+      print('executando');
+      Message message = Message();
+      message.imageUrl = '';
+      message.message = text;
+      message.tipo = 'texto';
+      message.idLoggedUser = idLoggedUser;
+
+      await _fireStore
+          .collection('messages')
+          .doc(idLoggedUser)
+          .collection(idRecipientUser)
+          .add(message.toMap());
+
+      await _fireStore
+          .collection('messages')
+          .doc(idRecipientUser)
+          .collection(idLoggedUser)
+          .add(message.toMap());
+    }
   }
 
   Widget boxMessage({
@@ -22,7 +37,7 @@ class BoxMessageWidget {
     required TextEditingController boxMessageController,
     required String idLoggedUser,
     required String idRecipientUser,
-    required Map<String, dynamic> message,
+    required String message,
   }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -68,7 +83,7 @@ class BoxMessageWidget {
               _sendMessage(
                 idLoggedUser: idLoggedUser,
                 idRecipientUser: idRecipientUser,
-                message: message,
+                text: boxMessageController.text,
               );
               boxMessageController.clear();
             },

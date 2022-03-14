@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp/components/box_message_widget.dart';
 import 'package:whatsapp/components/message_widget.dart';
 import 'package:whatsapp/model/user_model.dart';
-import 'package:whatsapp/provider/login_user_provider.dart';
-import 'package:whatsapp/provider/user_data_provider.dart';
+import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -20,54 +20,73 @@ class _MessagesPageState extends State<MessagesPage> {
   @override
   void initState() {
     super.initState();
-    UserImageProvider _userImageProvider = Provider.of(context, listen: false);
-
-    if (_userImageProvider.imageUrl == '' ||
-        _userImageProvider.imageUrl == 'http://') {
-      _userImageProvider.loadCurrentUserImage();
-    }
+    UserDataProvider _userDataProvider = Provider.of(context, listen: false);
+    _userDataProvider.getIdOfCurrentUser();
+    //esse método altera o _userDataProvider.idLoggedUser
   }
+
+  // Future getContents(String path) async {
+  //   var firestore = FirebaseFirestore.instance;
+  //   QuerySnapshot qn = await firestore
+  //       .collection('messages')
+  //       .doc(_userDataProvider.idLoggedUser)
+  //       .collection(user.idUser)
+  //       .get();
+  //   return qn.docs;
+  // }
 
   @override
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as UserModel;
     UserImageProvider _userImageProvider = Provider.of(context, listen: true);
-    LoginUserProvider _loginUserProvider = Provider.of(context, listen: true);
+    UserDataProvider _userDataProvider = Provider.of(context, listen: true);
 
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: user.imageUrl == 'null'
-                ? const AssetImage('lib/images/avatar.jpeg') as ImageProvider
-                : NetworkImage(user.imageUrl),
-            backgroundColor: Colors.grey,
+        title: FittedBox(
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: user.imageUrl == 'lib/images/avatar.jpeg'
+                    ? const AssetImage('lib/images/avatar.jpeg')
+                        as ImageProvider
+                    : NetworkImage(user.imageUrl),
+                backgroundColor: Colors.grey,
+              ),
+              const SizedBox(width: 10),
+              Text(user.name),
+            ],
           ),
-          const SizedBox(width: 10),
-          Text(user.name),
-        ],
-      )),
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: NetworkImage(
-              _userImageProvider.imageUrl,
-            ),
+            image: _userImageProvider.imageUrl == 'lib/images/avatar.jpeg'
+                ? const AssetImage(
+                    'lib/images/background_conversation_image.jpg',
+                  ) as ImageProvider
+                : NetworkImage(
+                    _userImageProvider.imageUrl,
+                  ),
           ),
         ),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              MessageWidget().message(),
-              // BoxMessageWidget().boxMessage(
-              //   boxMessageController: _textEditingController,
-              //   context: context,
-              //   idLoggedUser: _loginUserProvider.idLoggedUser,
-              //   idRecipientUser:
-              // ),
+              MessageWidget().message(
+                idLoggedUser: _userDataProvider.idLoggedUser,
+                idRecipientUser: user.idUser,
+              ),
+              BoxMessageWidget().boxMessage(
+                boxMessageController: _textEditingController,
+                context: context,
+                idLoggedUser: _userDataProvider.idLoggedUser,
+                idRecipientUser: user.idUser,
+                message: _textEditingController.text,
+              ),
             ],
           ),
         ),

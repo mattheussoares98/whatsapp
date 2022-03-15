@@ -15,8 +15,8 @@ class ContactsPage extends StatefulWidget {
 
 class _ContactsPageState extends State<ContactsPage> {
   _loadUsers() async {
-    UserDataProvider _userDataProvider = Provider.of(context, listen: false);
-    await _userDataProvider.loadUsers();
+    UserProvider _userProvider = Provider.of(context, listen: false);
+    await _userProvider.loadUsers();
   }
 
   @override
@@ -24,22 +24,20 @@ class _ContactsPageState extends State<ContactsPage> {
     super.initState();
 
     _loadUsers();
-
-    print('executou a atualização dos usuários');
   }
 
   @override
   Widget build(BuildContext context) {
-    UserDataProvider _userDataProvider = Provider.of(context, listen: true);
+    UserProvider _userProvider = Provider.of(context, listen: true);
 
-    return _userDataProvider.isLoading
+    return _userProvider.isLoading
         ? const Center(
             child: CircularProgressIndicator(),
           )
         : ListView.builder(
-            itemCount: _userDataProvider.items.length,
+            itemCount: _userProvider.items.length,
             itemBuilder: (context, index) {
-              UserModel user = _userDataProvider.items[index];
+              UserModel user = _userProvider.items[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: ListTile(
@@ -52,15 +50,15 @@ class _ContactsPageState extends State<ContactsPage> {
                   leading: CircleAvatar(
                     backgroundColor: Colors
                         .grey, //aparece essa cor enquanto carrega a imagem
-                    backgroundImage: _userDataProvider.items[index].imageUrl ==
+                    backgroundImage: _userProvider.items[index].imageUrl ==
                             'lib/images/avatar.jpeg'
                         ? const AssetImage('lib/images/avatar.jpeg')
                             as ImageProvider
-                        : NetworkImage(_userDataProvider.items[index].imageUrl),
+                        : NetworkImage(_userProvider.items[index].imageUrl),
                     radius: 25,
                   ),
                   title: Text(
-                    _userDataProvider.items[index].name,
+                    _userProvider.items[index].name,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,

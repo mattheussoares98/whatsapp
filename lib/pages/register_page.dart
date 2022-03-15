@@ -20,8 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final UserDataProvider _userDataProvider =
-        Provider.of(context, listen: true);
+    final UserProvider _userProvider = Provider.of(context, listen: true);
 
     bool validate() {
       bool isValid = _formKey.currentState!.validate();
@@ -56,7 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    enabled: _userDataProvider.isLoading ? false : true,
+                    enabled: _userProvider.isLoading ? false : true,
                     autofocus: true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
@@ -79,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    enabled: _userDataProvider.isLoading ? false : true,
+                    enabled: _userProvider.isLoading ? false : true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
                         color: Colors.redAccent[400],
@@ -106,7 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    enabled: _userDataProvider.isLoading ? false : true,
+                    enabled: _userProvider.isLoading ? false : true,
                     decoration: InputDecoration(
                       errorStyle: TextStyle(
                         color: Colors.redAccent[400],
@@ -129,16 +128,16 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                    onPressed: _userDataProvider.isLoading
+                    onPressed: _userProvider.isLoading
                         ? null
                         : () async {
                             bool isValid = validate();
                             if (!isValid) {
                               return;
                             }
-                            await _userDataProvider.createUser(_user);
+                            await _userProvider.createUser(_user);
 
-                            if (_userDataProvider.isRegistered) {
+                            if (_userProvider.isRegistered) {
                               //sucesso na criação do usuário
                               Navigator.of(context).pop();
                               Navigator.of(context)
@@ -147,11 +146,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               //erro na criação do usuário
                               showErrorMessage.showErrorMessage(
                                 context: context,
-                                message: _userDataProvider.errorMessage,
+                                message: _userProvider.errorMessage,
                               );
                             }
                           },
-                    child: _userDataProvider.isLoading
+                    child: _userProvider.isLoading
                         ? const CircularProgressIndicator()
                         : const Text('Cadastrar'),
                     style: ElevatedButton.styleFrom(

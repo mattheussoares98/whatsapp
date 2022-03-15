@@ -60,8 +60,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final UserDataProvider _userDataProvider =
-        Provider.of(context, listen: true);
+    final UserProvider _userDataProvider = Provider.of(context, listen: true);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,

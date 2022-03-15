@@ -1,11 +1,5 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:whatsapp/model/message.dart';
+import 'package:whatsapp/model/user_model.dart';
 import 'package:whatsapp/provider/message_provider.dart';
 
 class BoxMessageWidget {
@@ -16,6 +10,7 @@ class BoxMessageWidget {
     required String idRecipientUser,
     required String message,
     required MessageProvider messageProvider,
+    required UserModel user,
   }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -67,6 +62,8 @@ class BoxMessageWidget {
                 idLoggedUser: idLoggedUser,
                 idRecipientUser: idRecipientUser,
                 text: boxMessageController.text,
+                imageUrl: user.imageUrl,
+                userName: user.name,
               );
               boxMessageController.clear();
             },

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,19 +20,45 @@ class MessagesPage extends StatefulWidget {
 TextEditingController _textEditingController = TextEditingController();
 
 class _MessagesPageState extends State<MessagesPage> {
+  final StreamController<QuerySnapshot<Map<String, dynamic>>> _controller =
+      StreamController();
+
+  _addListener() {
+    final user = ModalRoute.of(context)!.settings.arguments as UserModel;
+    UserProvider _userProvider = Provider.of(context, listen: false);
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    var stream = firestore
+        .collection('messages')
+        .doc(_userProvider.idLoggedUser)
+        .collection(user.idUser)
+        .orderBy('dateTime', descending: true)
+        .snapshots();
+
+    stream.listen((data) {
+      _controller.add(data);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    UserDataProvider _userDataProvider = Provider.of(context, listen: false);
-    _userDataProvider.getIdOfCurrentUser();
-    //esse método altera o _userDataProvider.idLoggedUser
+    UserProvider _userProvider = Provider.of(context, listen: false);
+
+    _userProvider.getIdOfCurrentUser();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _addListener();
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as UserModel;
     UserImageProvider _userImageProvider = Provider.of(context, listen: true);
-    UserDataProvider _userDataProvider = Provider.of(context, listen: true);
+    UserProvider _userProvider = Provider.of(context, listen: true);
     MessageProvider _messageProvider = Provider.of(context, listen: true);
 
     return Scaffold(
@@ -69,16 +97,18 @@ class _MessagesPageState extends State<MessagesPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               MessageWidget().message(
-                idLoggedUser: _userDataProvider.idLoggedUser,
+                idLoggedUser: _userProvider.idLoggedUser,
                 idRecipientUser: user.idUser,
+                controller: _controller,
               ),
               BoxMessageWidget().boxMessage(
                 boxMessageController: _textEditingController,
                 context: context,
-                idLoggedUser: _userDataProvider.idLoggedUser,
+                idLoggedUser: _userProvider.idLoggedUser,
                 idRecipientUser: user.idUser,
                 message: _textEditingController.text,
                 messageProvider: _messageProvider,
+                user: user,
               ),
             ],
           ),

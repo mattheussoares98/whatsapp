@@ -1,17 +1,21 @@
 class Message {
   String? _message;
   String? _imageUrl;
-  String? _tipo;
+  String? _tipe;
   String? _idLoggedUser;
   String? _dateTime;
+  String? _idRecipientUser;
+  String? _userName;
 
   toMap() {
     Map<String, dynamic> map = {
       'message': message,
       'imageUrl': imageUrl,
-      'tipo': tipo,
+      'tipe': tipe,
       'idLoggedUser': idLoggedUser,
       'dateTime': dateTime,
+      'idRecipientUser': idRecipientUser,
+      'userName': userName,
     };
 
     return map;
@@ -23,6 +27,22 @@ class Message {
 
   set message(value) {
     _message = value;
+  }
+
+  String get userName {
+    return _userName!;
+  }
+
+  set userName(value) {
+    _userName = value;
+  }
+
+  String get idRecipientUser {
+    return _idRecipientUser!;
+  }
+
+  set idRecipientUser(value) {
+    _idRecipientUser = value;
   }
 
   String get idLoggedUser {
@@ -49,11 +69,11 @@ class Message {
     _imageUrl = value;
   }
 
-  String get tipo {
-    return _tipo!;
+  String get tipe {
+    return _tipe!;
   }
 
-  set tipo(value) {
-    _tipo = value;
+  set tipe(value) {
+    _tipe = value;
   }
 }

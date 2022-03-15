@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
+import 'package:whatsapp/provider/user_provider.dart';
 
 class ConfigurationsPage extends StatefulWidget {
   const ConfigurationsPage({Key? key}) : super(key: key);
@@ -21,8 +21,7 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
     final UserImageProvider _userImageProvider =
         Provider.of(context, listen: false);
 
-    final UserDataProvider _userDataProvider =
-        Provider.of(context, listen: false);
+    final UserProvider _userDataProvider = Provider.of(context, listen: false);
 
     if (didChange == false &&
         _userImageProvider.imageUrl != 'lib/images/avatar.jpeg') {
@@ -52,8 +51,7 @@ class _ConfigurationsPageState extends State<ConfigurationsPage> {
     final UserImageProvider _userImageProvider =
         Provider.of(context, listen: true);
 
-    final UserDataProvider _userDataProvider =
-        Provider.of(context, listen: true);
+    final UserProvider _userDataProvider = Provider.of(context, listen: true);
 
     return Scaffold(
       appBar: AppBar(

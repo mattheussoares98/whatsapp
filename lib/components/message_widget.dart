@@ -1,20 +1,16 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class MessageWidget {
   Widget message({
-    required idLoggedUser,
-    required idRecipientUser,
+    required String idLoggedUser,
+    required String idRecipientUser,
+    required StreamController<QuerySnapshot<Map<String, dynamic>>> controller,
   }) {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: firestore
-            .collection('messages')
-            .doc(idLoggedUser)
-            .collection(idRecipientUser)
-            .orderBy('dateTime', descending: true)
-            .snapshots(),
+        stream: controller.stream,
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           List listItems = snapshot.hasData ? snapshot.data!.docs : [];
@@ -50,7 +46,7 @@ class MessageWidget {
                           ? const Color.fromARGB(255, 165, 245, 167)
                           : Colors.white,
                       elevation: 5,
-                      child: listItems[index]['tipo'] == 'text'
+                      child: listItems[index]['tipe'] == 'text'
                           ? Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Text(

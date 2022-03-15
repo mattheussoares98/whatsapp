@@ -17,7 +17,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserDataProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => UserImageProvider()),
         ChangeNotifierProvider(create: (_) => MessageProvider()),
       ],

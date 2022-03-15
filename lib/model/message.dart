@@ -3,6 +3,7 @@ class Message {
   String? _imageUrl;
   String? _tipo;
   String? _idLoggedUser;
+  String? _dateTime;
 
   toMap() {
     Map<String, dynamic> map = {
@@ -10,6 +11,7 @@ class Message {
       'imageUrl': imageUrl,
       'tipo': tipo,
       'idLoggedUser': idLoggedUser,
+      'dateTime': dateTime,
     };
 
     return map;
@@ -29,6 +31,14 @@ class Message {
 
   set idLoggedUser(value) {
     _idLoggedUser = value;
+  }
+
+  String get dateTime {
+    return _dateTime!;
+  }
+
+  set dateTime(value) {
+    _dateTime = value;
   }
 
   String get imageUrl {

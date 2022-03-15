@@ -1,43 +1,21 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:whatsapp/model/message.dart';
+import 'package:whatsapp/provider/message_provider.dart';
 
 class BoxMessageWidget {
-  _sendMessage({
-    required String idLoggedUser,
-    required String idRecipientUser,
-    required String text,
-  }) async {
-    FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-
-    if (text.isNotEmpty) {
-      print('executando');
-      Message message = Message();
-      message.imageUrl = '';
-      message.message = text;
-      message.tipo = 'texto';
-      message.idLoggedUser = idLoggedUser;
-
-      await _fireStore
-          .collection('messages')
-          .doc(idLoggedUser)
-          .collection(idRecipientUser)
-          .add(message.toMap());
-
-      await _fireStore
-          .collection('messages')
-          .doc(idRecipientUser)
-          .collection(idLoggedUser)
-          .add(message.toMap());
-    }
-  }
-
   Widget boxMessage({
     required BuildContext context,
     required TextEditingController boxMessageController,
     required String idLoggedUser,
     required String idRecipientUser,
     required String message,
+    required MessageProvider messageProvider,
   }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -67,7 +45,12 @@ class BoxMessageWidget {
                   ),
                 ),
                 prefixIcon: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    messageProvider.sendPhoto(
+                      idLoggedUser: idLoggedUser,
+                      idRecipientUser: idRecipientUser,
+                    );
+                  },
                   icon: Icon(
                     Icons.camera_alt,
                     color: Theme.of(context).colorScheme.secondary,
@@ -80,7 +63,7 @@ class BoxMessageWidget {
             child: const Icon(Icons.send),
             mini: true,
             onPressed: () {
-              _sendMessage(
+              messageProvider.sendMessage(
                 idLoggedUser: idLoggedUser,
                 idRecipientUser: idRecipientUser,
                 text: boxMessageController.text,

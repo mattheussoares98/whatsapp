@@ -1,13 +1,17 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:whatsapp/model/user_model.dart';
 
 class UserDataProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   String _userName = '';
 
   get userName {
@@ -118,6 +122,9 @@ class UserDataProvider extends ChangeNotifier {
           .collection('user')
           .doc(userId)
           .update({'imageUrl': user.imageUrl});
+
+      //cria o caminho pra não dar erro
+      _storage.ref().child('images').child(_auth.currentUser!.uid);
     } catch (e) {
       _changeErrorMessage(e.toString());
       print('erro no cadastro ----------> $e');

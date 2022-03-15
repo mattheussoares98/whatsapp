@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:whatsapp/components/box_message_widget.dart';
 import 'package:whatsapp/components/message_widget.dart';
 import 'package:whatsapp/model/user_model.dart';
+import 'package:whatsapp/provider/message_provider.dart';
 import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
 
@@ -25,21 +26,12 @@ class _MessagesPageState extends State<MessagesPage> {
     //esse método altera o _userDataProvider.idLoggedUser
   }
 
-  // Future getContents(String path) async {
-  //   var firestore = FirebaseFirestore.instance;
-  //   QuerySnapshot qn = await firestore
-  //       .collection('messages')
-  //       .doc(_userDataProvider.idLoggedUser)
-  //       .collection(user.idUser)
-  //       .get();
-  //   return qn.docs;
-  // }
-
   @override
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as UserModel;
     UserImageProvider _userImageProvider = Provider.of(context, listen: true);
     UserDataProvider _userDataProvider = Provider.of(context, listen: true);
+    MessageProvider _messageProvider = Provider.of(context, listen: true);
 
     return Scaffold(
       appBar: AppBar(
@@ -86,6 +78,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 idLoggedUser: _userDataProvider.idLoggedUser,
                 idRecipientUser: user.idUser,
                 message: _textEditingController.text,
+                messageProvider: _messageProvider,
               ),
             ],
           ),

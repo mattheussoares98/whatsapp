@@ -6,6 +6,7 @@ import 'package:whatsapp/pages/login_page.dart';
 import 'package:whatsapp/pages/messages_page.dart';
 import 'package:whatsapp/pages/register_page.dart';
 import 'package:whatsapp/pages/splash_screen.dart';
+import 'package:whatsapp/provider/message_provider.dart';
 import 'package:whatsapp/provider/user_provider.dart';
 import 'package:whatsapp/provider/user_image_provider.dart';
 import 'package:whatsapp/utils/app_routes.dart';
@@ -18,6 +19,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => UserDataProvider()),
         ChangeNotifierProvider(create: (_) => UserImageProvider()),
+        ChangeNotifierProvider(create: (_) => MessageProvider()),
       ],
       child: MaterialApp(
         theme: theme.copyWith(

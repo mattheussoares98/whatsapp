@@ -13,6 +13,7 @@ class MessageWidget {
             .collection('messages')
             .doc(idLoggedUser)
             .collection(idRecipientUser)
+            .orderBy('dateTime', descending: true)
             .snapshots(),
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -23,6 +24,7 @@ class MessageWidget {
           } else if (snapshot.hasData) {
             return Expanded(
               child: ListView.builder(
+                reverse: true,
                 itemCount: listItems.length,
                 itemBuilder: (context, index) {
                   bool messageOfCurrentUser =
@@ -48,15 +50,25 @@ class MessageWidget {
                           ? const Color.fromARGB(255, 165, 245, 167)
                           : Colors.white,
                       elevation: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          listItems[index]['message'],
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
+                      child: listItems[index]['tipo'] == 'text'
+                          ? Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                listItems[index]['message'],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: SizedBox(
+                                height: 200,
+                                // width: 200,
+                                child:
+                                    Image.network(listItems[index]['imageUrl']),
+                              ),
+                            ),
                     ),
                   );
                 },

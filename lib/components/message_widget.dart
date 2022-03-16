@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 class MessageWidget {
   Widget message({
+    required ScrollController scrollController,
     required String idLoggedUser,
     required String idRecipientUser,
     required StreamController<QuerySnapshot<Map<String, dynamic>>> controller,
@@ -20,6 +21,7 @@ class MessageWidget {
           } else if (snapshot.hasData) {
             return Expanded(
               child: ListView.builder(
+                controller: scrollController,
                 reverse: true,
                 itemCount: listItems.length,
                 itemBuilder: (context, index) {

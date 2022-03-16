@@ -40,12 +40,19 @@ class _MessagesPageState extends State<MessagesPage> {
     });
   }
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     UserProvider _userProvider = Provider.of(context, listen: false);
 
     _userProvider.getIdOfCurrentUser();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -100,8 +107,10 @@ class _MessagesPageState extends State<MessagesPage> {
                 idLoggedUser: _userProvider.idLoggedUser,
                 idRecipientUser: user.idUser,
                 controller: _controller,
+                scrollController: _scrollController,
               ),
               BoxMessageWidget().boxMessage(
+                scrollController: _scrollController,
                 boxMessageController: _textEditingController,
                 context: context,
                 idLoggedUser: _userProvider.idLoggedUser,

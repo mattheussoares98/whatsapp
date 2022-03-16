@@ -4,6 +4,7 @@ import 'package:whatsapp/provider/message_provider.dart';
 
 class BoxMessageWidget {
   Widget boxMessage({
+    required ScrollController scrollController,
     required BuildContext context,
     required TextEditingController boxMessageController,
     required String idLoggedUser,
@@ -45,6 +46,8 @@ class BoxMessageWidget {
                       idLoggedUser: idLoggedUser,
                       idRecipientUser: idRecipientUser,
                     );
+                    scrollController
+                        .jumpTo(scrollController.position.maxScrollExtent);
                   },
                   icon: Icon(
                     Icons.camera_alt,
@@ -65,6 +68,8 @@ class BoxMessageWidget {
                 imageUrl: user.imageUrl,
                 userName: user.name,
               );
+              scrollController
+                  .jumpTo(scrollController.position.minScrollExtent);
               boxMessageController.clear();
             },
           ),
